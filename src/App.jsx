@@ -13,14 +13,20 @@ function App() {
       if (type === "followers") {
         const jsonData = JSON.parse(e.target.result);
         console.log(jsonData);
-        const usernames = jsonData.map(item => item.string_list_data[0].value);
+        const usernames = jsonData.map(item => ({
+          username: item.string_list_data[0].value,
+          href: item.string_list_data[0].href
+        }));
         setFollowers(usernames);
       } else {
         const jsonData = JSON.parse(e.target.result);
         const jsonFollowings = jsonData.relationships_following;
         console.log(jsonData);
         console.log(jsonFollowings);
-        const usernames = jsonFollowings.map(item => item.string_list_data[0].value);
+        const usernames = jsonFollowings.map(item => ({
+          username: item.string_list_data[0].value,
+          href: item.string_list_data[0].href
+        }));
         setFollowing(usernames);
       }
     };
@@ -30,17 +36,17 @@ function App() {
 
   const analyzeData = () => {
     if (followers.length > 0 && following.length > 0) {
-      const followersSet = new Set(followers);
-      const followingSet = new Set(following);
+      const followersMap = new Map(followers.map(user => [user.username, user.href]));
+      const followingMap = new Map(following.map(user => [user.username, user.href]));
 
-      const notFollowingBack = [...followingSet].filter(user => !followersSet.has(user));
-      const notFollowedBack = [...followersSet].filter(user => !followingSet.has(user));
-      const mutualFollowers = [...followingSet].filter(user => followersSet.has(user));
+      const notFollowingBack = [...followingMap.keys()].filter(user => !followersMap.has(user));
+      const notFollowedBack = [...followersMap.keys()].filter(user => !followingMap.has(user));
+      const mutualFollowers = [...followingMap.keys()].filter(user => followersMap.has(user));
 
       setResults({
-        notFollowingBack,
-        notFollowedBack,
-        mutualFollowers,
+        notFollowingBack: notFollowingBack.map(user => ({ username: user, href: followingMap.get(user) })),
+        notFollowedBack: notFollowedBack.map(user => ({ username: user, href: followersMap.get(user) })),
+        mutualFollowers: mutualFollowers.map(user => ({ username: user, href: followingMap.get(user) })),
       });
 
       console.log(results);
@@ -48,10 +54,10 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 p-4 flex flex-col items-center justify-center">
       <h1 className="text-3xl font-semibold mb-6">Instagram Follow Check</h1>
 
-      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
+      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg mb-6">
         <div className="mb-4">
           <label className="block text-gray-700 font-semibold mb-2">Cargar archivo de seguidores:</label>
           <input
@@ -81,33 +87,46 @@ function App() {
       </div>
 
       {results && (
-        <div className="mt-6 w-full max-w-lg bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-semibold mb-4">Resultados</h2>
-          <div>
-            <h3 className="text-lg font-semibold">No te siguen de vuelta:</h3>
-            <ul className="list-disc pl-5">
-              {results.notFollowingBack.map((user, index) => (
-                <li key={index}>{user}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="mt-4">
-            <h3 className="text-lg font-semibold">No sigues de vuelta:</h3>
-            <ul className="list-disc pl-5">
-              {results.notFollowedBack.map((user, index) => (
-                <li key={index}>{user}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="mt-4">
-            <h3 className="text-lg font-semibold">Seguimiento mutuo:</h3>
-            <ul className="list-disc pl-5">
-              {results.mutualFollowers.map((user, index) => (
-                <li key={index}>{user}</li>
-              ))}
-            </ul>
-          </div>
+        <div className="w-full flex flex-wrap justify-between items-start">
+        <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow-lg flex flex-col">
+          <h2 className="text-xl font-semibold mb-4">No te siguen de vuelta:</h2>
+          <ul className="space-y-2">
+            {results.notFollowingBack.map((user, index) => (
+              <li key={index}>
+                <a href={user.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                  {user.username}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
+      
+        <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow-lg flex flex-col">
+          <h2 className="text-xl font-semibold mb-4">No sigues de vuelta:</h2>
+          <ul className="space-y-2">
+            {results.notFollowedBack.map((user, index) => (
+              <li key={index}>
+                <a href={user.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                  {user.username}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      
+        <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow-lg flex flex-col">
+          <h2 className="text-xl font-semibold mb-4">Se siguen mutuamente:</h2>
+          <ul className="space-y-2">
+            {results.mutualFollowers.map((user, index) => (
+              <li key={index}>
+                <a href={user.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                  {user.username}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>            
       )}
     </div>
   );
