@@ -88,45 +88,45 @@ function App() {
 
       {results && (
         <div className="w-full flex flex-wrap justify-between items-start">
-        <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow-lg flex flex-col">
-          <h2 className="text-xl font-semibold mb-4">No te siguen de vuelta:</h2>
-          <ul className="space-y-2">
-            {results.notFollowingBack.map((user, index) => (
-              <li key={index}>
-                <a href={user.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                  {user.username}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow-lg flex flex-col">
+            <h2 className="text-xl font-semibold mb-4">No te siguen de vuelta:</h2>
+            <ul className="space-y-2">
+              {results.notFollowingBack.map((user, index) => (
+                <li key={index}>
+                  <a href={user.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                    {user.username}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow-lg flex flex-col">
+            <h2 className="text-xl font-semibold mb-4">No sigues de vuelta:</h2>
+            <ul className="space-y-2">
+              {results.notFollowedBack.map((user, index) => (
+                <li key={index}>
+                  <a href={user.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                    {user.username}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow-lg flex flex-col">
+            <h2 className="text-xl font-semibold mb-4">Se siguen mutuamente:</h2>
+            <ul className="space-y-2">
+              {results.mutualFollowers.map((user, index) => (
+                <li key={index}>
+                  <a href={user.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                    {user.username}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      
-        <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow-lg flex flex-col">
-          <h2 className="text-xl font-semibold mb-4">No sigues de vuelta:</h2>
-          <ul className="space-y-2">
-            {results.notFollowedBack.map((user, index) => (
-              <li key={index}>
-                <a href={user.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                  {user.username}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      
-        <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow-lg flex flex-col">
-          <h2 className="text-xl font-semibold mb-4">Se siguen mutuamente:</h2>
-          <ul className="space-y-2">
-            {results.mutualFollowers.map((user, index) => (
-              <li key={index}>
-                <a href={user.href} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                  {user.username}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>            
       )}
     </div>
   );
